@@ -1,4 +1,7 @@
 <?php
+// get started with: php -S 127.0.0.1:8666
+
+// https://stats.nba.com/game/0021800040/?sort=FTA&dir=1
 
 // https://stats.nba.com/stats/boxscoretraditionalv2?
 // https://stats.nba.com/stats/boxscoresummaryv2?GameID=0021800040
@@ -13,11 +16,8 @@ $response = curl_exec($ch);
 $json = json_decode($response, TRUE);
 curl_close($ch);
 $games = $json['gs']['g'];
-echo json_encode($games);
+// echo json_encode($games);
 
-
-// echo "hey";
-// echo strlen(join(" ",$_GET));
 
 $ready = false;
 if (isset($_GET['gameID'])) {
@@ -27,41 +27,143 @@ if (isset($_GET['gameID'])) {
 
 if ($ready) {
 
+  // works for some reason...
+  // wget --header='Connection: keep-alive' --header='User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36' --header='Host: stats.nba.com' --header='Accept: text/html,application/xhtml+xml,application/xml;' https://stats.nba.com/stats/boxscoresummaryv2\?GameId\=0021800041
+
+
+  // docs: http://us3.php.net/manual/en/function.curl-setopt.php
   $ch = curl_init();
-  curl_setopt($ch, CURLOPT_URL, $scores);
+  $data = http_build_query(array(
+   'GameID'  => $gameID
+  ));
+  curl_setopt($ch, CURLOPT_URL, "https://stats.nba.com/stats/boxscoresummaryv2");
+  curl_setopt($ch, CURLOPT_POST, true); 
+  curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+    'Host: stats.nba.com',
+    'Connection: keep-alive',
+    'Accept: text/html,application/xhtml+xml,application/xml',
+    'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36'
+  ));
+  curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
   curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
   $response = curl_exec($ch);
   $json = json_decode($response, TRUE);
   curl_close($ch);
 
-	$gameChosen = $games['games'][$gameID];
+  echo json_encode($json);
 
-	$visitorShort = getShortName($gameChosen['visitor']);
-	$visitorName = $gameChosen['visitor'];
-	$visitorScore = $gameChosen['visitor_score'];
-	$visitorBox = $gameChosen['visitor_boxscore'];
+ //  $boxscoreSummary = $json['resultSets'];
 
-	$homeShort = getShortName($gameChosen['home']);
-	$homeName = $gameChosen['home'];
-	$homeScore = $gameChosen['home_score'];
-	$homeBox = $gameChosen['home_boxscore'];
+ //  $ch = curl_init();
+ //  $data = http_build_query(array(
+ //   'GameID'  => $gameID,
+ //   'EndPeriod' => '10',
+ //   'EndRange' => '28800',
+ //   'RangeType' => '0',
+ //   'Season' => '2018-19',
+ //   'StartPeriod' => '1',
+ //   'StartRange' => '0'
+ //  ));
+ //  curl_setopt($ch, CURLOPT_URL, "https://stats.nba.com/stats/boxscoretraditionalv2");
+ //  curl_setopt($ch, CURLOPT_POST, true); 
+ //  curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+ //  curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+ //  $response = curl_exec($ch);
+ //  $json = json_decode($response, TRUE);
+ //  curl_close($ch);
 
-	$textToReddit = getRedditText($visitorShort, $visitorName, $visitorScore, $visitorBox, $homeShort, $homeName, $homeScore, $homeBox);
+ //  echo json_encode($json);
 
-	// $dateToday = date("Ymd");
-	// $firebaseGames = json_decode(file_get_contents("https://nba-app-ca681.firebaseio.com/nba/".$dateToday."/games.json"), true);
+ //  $boxscore = $json['resultSets'];
 
-	// $nbaDate = "";
-	// $nbaID = "";
-	// foreach($firebaseGames as $firebaseGame) {
-	// 	if ($firebaseGame["awayTeamKey"] == $visitorShort || $firebaseGame["homeTeamKey"] == $homeShort) {
-	// 		$nbaDate = $firebaseGame["date"];
-	// 		$nbaID = $firebaseGame["id"];
-	// 		break;
-	// 	}
-	// }
+ //  $format = [
+ //          "Player",
+ //          "Pos",
+ //          "Min",
+ //          "FG",
+ //          "FT",
+ //          "3PT",
+ //          "+/-",
+ //          "OR",
+ //          "Reb",
+ //          "A",
+ //          "Blk",
+ //          "Stl",
+ //          "TO",
+ //          "PF",
+ //          "Pts"
+ //        ];
+ //  $visitorBoxArr = [$format];
+ //  $homeBoxArr = [$format];
 
-	$boxscoreandmorebs = "[boxscoreandmore.com](https://www.boxscoreandmore.com/#/boxscore/".$nbaID."/game)";
+	// $visitorShort = $boxscoreSummary[5]['rowSet'][1][4];
+	// $visitorName = $boxscoreSummary[5]['rowSet'][1][5];
+	// $visitorScore = $boxscoreSummary[5]['rowSet'][1][22];
+
+	// $homeShort = $boxscoreSummary[5]['rowSet'][0][4];
+	// $homeName = $boxscoreSummary[5]['rowSet'][0][5];
+	// $homeScore = $boxscoreSummary[5]['rowSet'][0][22];
+
+  // foreach ($boxscore[0]['rowSet'] as $value) {
+  //   $data = [
+  //     $value[5],
+  //     $value[6],
+  //     $value[8],
+  //     "{$value[9]}-{$value[10]}",
+  //     "{$value[15]}-{$value[16]}",
+  //     "{$value[12]}-{$value[13]}",
+  //     $value[27],
+  //     $value[18],
+  //     $value[20],
+  //     $value[21],
+  //     $value[23],
+  //     $value[22],
+  //     $value[24],
+  //     $value[25],
+  //     $value[26]
+  //   ];
+
+  //   if ($value[2] == $visitorShort) {
+  //     array_push($visitorBoxArr, $data);
+  //   } else {
+  //     array_push($homeBoxArr, $data);
+  //   }
+  // }
+
+  // foreach ($boxscore[1]['rowSet'] as $value) {
+  //   $data = [
+  //     "Totals",
+  //     "&nbsp;",
+  //     "&nbsp;",
+  //     "{$value[6]}-{$value[7]}({$value[8]})",
+  //     "{$value[12]}-{$value[13]}({$value[14]})",
+  //     "{$value[9]}-{$value[10]}({$value[11]})",
+  //     $value[24],
+  //     $value[15],
+  //     $value[17],
+  //     $value[18],
+  //     $value[20],
+  //     $value[19],
+  //     $value[21],
+  //     $value[22],
+  //     $value[23]      
+  //   ];
+  //   if ($value[3] == $visitorShort) {
+  //     array_push($visitorBoxArr, $data);
+  //   } else {
+  //     array_push($homeBoxArr, $data);
+  //   }
+  // }
+
+  // $visitorBox = $visitorBoxArr;
+  // $homeBox = $homeBoxArr;
+
+
+	// $textToReddit = getRedditText($visitorShort, $visitorName, $visitorScore, $visitorBox, $homeShort, $homeName, $homeScore, $homeBox);
+
+
+
+	// $boxscoreandmorebs = "[boxscoreandmore.com](https://www.boxscoreandmore.com/#/boxscore/".$nbaID."/game)";
 
 	// $textToReddit = "Box Score: ".$ballislifebs." | ".$boxscoreandmorebs." \n\n".$textToReddit;
 }
@@ -470,8 +572,8 @@ function getShortName($teamName) {
 	if ($ready) {
 
 		// Print HTML box score tables
-		printHTMLTable($games['games'][$gameID]['visitor'], $games['games'][$gameID]['visitor'], $games['games'][$gameID]['visitor_boxscore']);
-		printHTMLTable($games['games'][$gameID]['home'], $games['games'][$gameID]['home'], $games['games'][$gameID]['home_boxscore']);
+		printHTMLTable($visitorName, $visitorShort, $visitorBox);
+		printHTMLTable($homeName, $homeShort, $homeBox);
 ?>
 
 		<div class="row">
@@ -495,6 +597,7 @@ function getShortName($teamName) {
 	}
 ?>
 	</div>
+
 
 <!-- 	<script>
 	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
