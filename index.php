@@ -36,21 +36,22 @@ if ($ready) {
   $data = http_build_query(array(
    'GameID'  => $gameID
   ));
-  curl_setopt($ch, CURLOPT_URL, "https://stats.nba.com/stats/boxscoresummaryv2");
-  curl_setopt($ch, CURLOPT_POST, true); 
+  curl_setopt($ch, CURLOPT_URL, "https://stats.nba.com/stats/boxscoresummaryv2?".$data);
   curl_setopt($ch, CURLOPT_HTTPHEADER, array(
     'Host: stats.nba.com',
     'Connection: keep-alive',
-    'Accept: text/html,application/xhtml+xml,application/xml',
-    'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36'
+    'Accept-Encoding: gzip, deflate, br',
+    // 'Accept: text/html,application/xhtml+xml,application/xml',
+    // 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36'
   ));
-  curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
   curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+  curl_setopt($ch, CURLOPT_VERBOSE, true);
   $response = curl_exec($ch);
   $json = json_decode($response, TRUE);
+  var_dump($json);
   curl_close($ch);
 
-  echo json_encode($json);
+  // echo json_encode($json);
 
  //  $boxscoreSummary = $json['resultSets'];
 
@@ -64,9 +65,12 @@ if ($ready) {
  //   'StartPeriod' => '1',
  //   'StartRange' => '0'
  //  ));
- //  curl_setopt($ch, CURLOPT_URL, "https://stats.nba.com/stats/boxscoretraditionalv2");
- //  curl_setopt($ch, CURLOPT_POST, true); 
- //  curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+ //  curl_setopt($ch, CURLOPT_URL, "https://stats.nba.com/stats/boxscoretraditionalv2?" . $data);
+  //   curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+  //   'Host: stats.nba.com',
+  //   'Connection: keep-alive',
+  //   'Accept-Encoding: gzip, deflate, br',
+  // ));
  //  curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
  //  $response = curl_exec($ch);
  //  $json = json_decode($response, TRUE);
