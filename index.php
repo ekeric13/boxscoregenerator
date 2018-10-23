@@ -1,9 +1,23 @@
 <?php
 
+// https://stats.nba.com/stats/boxscoretraditionalv2?
+// https://stats.nba.com/stats/boxscoresummaryv2?GameID=0021800040
 include 'simple_html_dom.php';
 date_default_timezone_set('America/Los_Angeles');
 
-$games = json_decode(file_get_contents("api/v1/games.json"), true);
+$scores = 'https://data.nba.com/data/5s/v2015/json/mobile_teams/nba/2018/scores/00_todays_scores.json';
+$ch = curl_init();
+curl_setopt($ch, CURLOPT_URL, $scores);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+$response = curl_exec($ch);
+$json = json_decode($response, TRUE);
+curl_close($ch);
+$games = $json['gs']['g'];
+echo json_encode($games);
+
+
+// echo "hey";
+// echo strlen(join(" ",$_GET));
 
 $ready = false;
 if (isset($_GET['gameID'])) {
@@ -12,6 +26,14 @@ if (isset($_GET['gameID'])) {
 }
 
 if ($ready) {
+
+  $ch = curl_init();
+  curl_setopt($ch, CURLOPT_URL, $scores);
+  curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+  $response = curl_exec($ch);
+  $json = json_decode($response, TRUE);
+  curl_close($ch);
+
 	$gameChosen = $games['games'][$gameID];
 
 	$visitorShort = getShortName($gameChosen['visitor']);
@@ -26,23 +48,22 @@ if ($ready) {
 
 	$textToReddit = getRedditText($visitorShort, $visitorName, $visitorScore, $visitorBox, $homeShort, $homeName, $homeScore, $homeBox);
 
-	$dateToday = date("Ymd");
-	$firebaseGames = json_decode(file_get_contents("https://nba-app-ca681.firebaseio.com/nba/".$dateToday."/games.json"), true);
+	// $dateToday = date("Ymd");
+	// $firebaseGames = json_decode(file_get_contents("https://nba-app-ca681.firebaseio.com/nba/".$dateToday."/games.json"), true);
 
-	$nbaDate = "";
-	$nbaID = "";
-	foreach($firebaseGames as $firebaseGame) {
-		if ($firebaseGame["awayTeamKey"] == $visitorShort || $firebaseGame["homeTeamKey"] == $homeShort) {
-			$nbaDate = $firebaseGame["date"];
-			$nbaID = $firebaseGame["id"];
-			break;
-		}
-	}
+	// $nbaDate = "";
+	// $nbaID = "";
+	// foreach($firebaseGames as $firebaseGame) {
+	// 	if ($firebaseGame["awayTeamKey"] == $visitorShort || $firebaseGame["homeTeamKey"] == $homeShort) {
+	// 		$nbaDate = $firebaseGame["date"];
+	// 		$nbaID = $firebaseGame["id"];
+	// 		break;
+	// 	}
+	// }
 
-	$ballislifebs = "[ballislife.io](http://ballislife.io/game/".$nbaDate."/".$nbaID.")";
 	$boxscoreandmorebs = "[boxscoreandmore.com](https://www.boxscoreandmore.com/#/boxscore/".$nbaID."/game)";
 
-	$textToReddit = "Box Scores: ".$ballislifebs." | ".$boxscoreandmorebs." \n\n".$textToReddit;
+	// $textToReddit = "Box Score: ".$ballislifebs." | ".$boxscoreandmorebs." \n\n".$textToReddit;
 }
 
 
@@ -418,10 +439,10 @@ function getShortName($teamName) {
 						<div class="col-md-8">
 							<select name="gameID">
 							<?
-							foreach($games['games'] as $game) {
-								$id = $game['id'];
-								$visitor = $game['visitor'];
-								$home = $game['home'];
+							foreach($games as $game) {
+								$id = $game['gid'];
+								$visitor = $game['v']['ta'];
+								$home = $game['h']['ta'];
 								$matchup = $visitor." @ ".$home;
 
 								echo "<option value='".$id."'>".$matchup."</option>";
@@ -474,7 +495,8 @@ function getShortName($teamName) {
 	}
 ?>
 	</div>
-	<script>
+
+<!-- 	<script>
 	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
 	  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
 	  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
@@ -483,7 +505,7 @@ function getShortName($teamName) {
 	  ga('create', 'UA-75603173-1', 'auto');
 	  ga('send', 'pageview');
 
-	</script>
+	</script> -->
 </body>
 
 </html>
