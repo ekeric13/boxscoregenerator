@@ -25,6 +25,11 @@ if (isset($_GET['gameID'])) {
 	$ready = true;
 }
 
+function isJson($string) {
+ json_decode($string);
+ return (json_last_error() == JSON_ERROR_NONE);
+}
+
 if ($ready) {
 
   // works for some reason...
@@ -41,14 +46,14 @@ if ($ready) {
     'Host: stats.nba.com',
     'Connection: keep-alive',
     'Accept-Encoding: gzip, deflate, br',
-    // 'Accept: text/html,application/xhtml+xml,application/xml',
+    'Accept: application/json',
     // 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36'
   ));
   curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
   curl_setopt($ch, CURLOPT_VERBOSE, true);
   $response = curl_exec($ch);
-  $json = json_decode($response, TRUE);
-  var_dump($json);
+  $json = json_decode($response);
+  var_dump( isJson($response) );
   curl_close($ch);
 
   // echo json_encode($json);
