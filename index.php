@@ -559,7 +559,6 @@ function getShortName($teamName) {
 							}
 							?>
 							</select>
-							<!--<input type="hidden" name="date" value="<?php echo $date; ?>"></input>-->
 							<input type="submit" value="Go!" class="btn btn-primary">
 						</div>
 					</div>
