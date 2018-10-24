@@ -8,6 +8,14 @@
 include 'simple_html_dom.php';
 date_default_timezone_set('America/Los_Angeles');
 
+$stat_headers = array(
+  'Host: stats.nba.com',
+  'Connection: keep-alive',
+  // 'Accept-Encoding: gzip, deflate, br',
+  'Accept: application/json',
+  // 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36'
+);
+
 $scores = 'https://data.nba.com/data/5s/v2015/json/mobile_teams/nba/2018/scores/00_todays_scores.json';
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_URL, $scores);
@@ -16,10 +24,10 @@ $response = curl_exec($ch);
 $json = json_decode($response, TRUE);
 curl_close($ch);
 $games = $json['gs']['g'];
-// echo json_encode($games);
 
 
 $ready = false;
+// looks for qs in window.location
 if (isset($_GET['gameID'])) {
 	$gameID = $_GET['gameID'];
 	$ready = true;
@@ -42,133 +50,119 @@ if ($ready) {
    'GameID'  => $gameID
   ));
   curl_setopt($ch, CURLOPT_URL, "https://stats.nba.com/stats/boxscoresummaryv2?".$data);
-  curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-    'Host: stats.nba.com',
-    'Connection: keep-alive',
-    'Accept-Encoding: gzip, deflate, br',
-    'Accept: application/json',
-    // 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36'
-  ));
+  curl_setopt($ch, CURLOPT_HTTPHEADER, $stat_headers);
   curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-  curl_setopt($ch, CURLOPT_VERBOSE, true);
+  curl_setopt($ch, CURLOPT_ENCODING, "");
   $response = curl_exec($ch);
-  $json = json_decode($response);
-  var_dump( isJson($response) );
+  $json = json_decode($response, TRUE);
   curl_close($ch);
 
-  // echo json_encode($json);
+  $boxscoreSummary = $json['resultSets'];
 
- //  $boxscoreSummary = $json['resultSets'];
+  $ch = curl_init();
+  $data = http_build_query(array(
+   'GameID'  => $gameID,
+   'EndPeriod' => '10',
+   'EndRange' => '28800',
+   'RangeType' => '0',
+   'Season' => '2018-19',
+   'StartPeriod' => '1',
+   'StartRange' => '0'
+  ));
+  curl_setopt($ch, CURLOPT_URL, "https://stats.nba.com/stats/boxscoretraditionalv2?" . $data);
+  curl_setopt($ch, CURLOPT_HTTPHEADER, $stat_headers);
+  curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+  curl_setopt($ch, CURLOPT_ENCODING, "");
+  $response = curl_exec($ch);
+  $json = json_decode($response, TRUE);
+  curl_close($ch);
 
- //  $ch = curl_init();
- //  $data = http_build_query(array(
- //   'GameID'  => $gameID,
- //   'EndPeriod' => '10',
- //   'EndRange' => '28800',
- //   'RangeType' => '0',
- //   'Season' => '2018-19',
- //   'StartPeriod' => '1',
- //   'StartRange' => '0'
- //  ));
- //  curl_setopt($ch, CURLOPT_URL, "https://stats.nba.com/stats/boxscoretraditionalv2?" . $data);
-  //   curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-  //   'Host: stats.nba.com',
-  //   'Connection: keep-alive',
-  //   'Accept-Encoding: gzip, deflate, br',
-  // ));
- //  curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
- //  $response = curl_exec($ch);
- //  $json = json_decode($response, TRUE);
- //  curl_close($ch);
+  $boxscore = $json['resultSets'];
 
- //  echo json_encode($json);
+  $format = [
+          "Player",
+          "Pos",
+          "Min",
+          "FG",
+          "FT",
+          "3PT",
+          "+/-",
+          "OR",
+          "Reb",
+          "A",
+          "Blk",
+          "Stl",
+          "TO",
+          "PF",
+          "Pts"
+        ];
+  $visitorBoxArr = [$format];
+  $homeBoxArr = [$format];
 
- //  $boxscore = $json['resultSets'];
+	$visitorShort = $boxscoreSummary[5]['rowSet'][1][4];
+	$visitorName = $boxscoreSummary[5]['rowSet'][1][5];
+	$visitorScore = $boxscoreSummary[5]['rowSet'][1][22];
 
- //  $format = [
- //          "Player",
- //          "Pos",
- //          "Min",
- //          "FG",
- //          "FT",
- //          "3PT",
- //          "+/-",
- //          "OR",
- //          "Reb",
- //          "A",
- //          "Blk",
- //          "Stl",
- //          "TO",
- //          "PF",
- //          "Pts"
- //        ];
- //  $visitorBoxArr = [$format];
- //  $homeBoxArr = [$format];
+	$homeShort = $boxscoreSummary[5]['rowSet'][0][4];
+	$homeName = $boxscoreSummary[5]['rowSet'][0][5];
+	$homeScore = $boxscoreSummary[5]['rowSet'][0][22];
 
-	// $visitorShort = $boxscoreSummary[5]['rowSet'][1][4];
-	// $visitorName = $boxscoreSummary[5]['rowSet'][1][5];
-	// $visitorScore = $boxscoreSummary[5]['rowSet'][1][22];
+  foreach ($boxscore[0]['rowSet'] as $value) {
+    $data = [
+      $value[5],
+      $value[6],
+      $value[8],
+      "{$value[9]}-{$value[10]}",
+      "{$value[15]}-{$value[16]}",
+      "{$value[12]}-{$value[13]}",
+      $value[27],
+      $value[18],
+      $value[20],
+      $value[21],
+      $value[23],
+      $value[22],
+      $value[24],
+      $value[25],
+      $value[26]
+    ];
 
-	// $homeShort = $boxscoreSummary[5]['rowSet'][0][4];
-	// $homeName = $boxscoreSummary[5]['rowSet'][0][5];
-	// $homeScore = $boxscoreSummary[5]['rowSet'][0][22];
+    if ($value[2] == $visitorShort) {
+      array_push($visitorBoxArr, $data);
+    } else {
+      array_push($homeBoxArr, $data);
+    }
+  }
 
-  // foreach ($boxscore[0]['rowSet'] as $value) {
-  //   $data = [
-  //     $value[5],
-  //     $value[6],
-  //     $value[8],
-  //     "{$value[9]}-{$value[10]}",
-  //     "{$value[15]}-{$value[16]}",
-  //     "{$value[12]}-{$value[13]}",
-  //     $value[27],
-  //     $value[18],
-  //     $value[20],
-  //     $value[21],
-  //     $value[23],
-  //     $value[22],
-  //     $value[24],
-  //     $value[25],
-  //     $value[26]
-  //   ];
+  foreach ($boxscore[1]['rowSet'] as $value) {
+    $data = [
+      "Totals",
+      "&nbsp;",
+      "&nbsp;",
+      "{$value[6]}-{$value[7]}({$value[8]})",
+      "{$value[12]}-{$value[13]}({$value[14]})",
+      "{$value[9]}-{$value[10]}({$value[11]})",
+      $value[24],
+      $value[15],
+      $value[17],
+      $value[18],
+      $value[20],
+      $value[19],
+      $value[21],
+      $value[22],
+      $value[23]      
+    ];
+    if ($value[3] == $visitorShort) {
+      array_push($visitorBoxArr, $data);
+    } else {
+      array_push($homeBoxArr, $data);
+    }
+  }
 
-  //   if ($value[2] == $visitorShort) {
-  //     array_push($visitorBoxArr, $data);
-  //   } else {
-  //     array_push($homeBoxArr, $data);
-  //   }
-  // }
-
-  // foreach ($boxscore[1]['rowSet'] as $value) {
-  //   $data = [
-  //     "Totals",
-  //     "&nbsp;",
-  //     "&nbsp;",
-  //     "{$value[6]}-{$value[7]}({$value[8]})",
-  //     "{$value[12]}-{$value[13]}({$value[14]})",
-  //     "{$value[9]}-{$value[10]}({$value[11]})",
-  //     $value[24],
-  //     $value[15],
-  //     $value[17],
-  //     $value[18],
-  //     $value[20],
-  //     $value[19],
-  //     $value[21],
-  //     $value[22],
-  //     $value[23]      
-  //   ];
-  //   if ($value[3] == $visitorShort) {
-  //     array_push($visitorBoxArr, $data);
-  //   } else {
-  //     array_push($homeBoxArr, $data);
-  //   }
-  // }
-
-  // $visitorBox = $visitorBoxArr;
-  // $homeBox = $homeBoxArr;
+  $visitorBox = $visitorBoxArr;
+  $homeBox = $homeBoxArr;
 
 
-	// $textToReddit = getRedditText($visitorShort, $visitorName, $visitorScore, $visitorBox, $homeShort, $homeName, $homeScore, $homeBox);
+	$textToReddit = getRedditText($visitorShort, $visitorName, $visitorScore, $visitorBox, $homeShort, $homeName, $homeScore, $homeBox);
 
 
 
@@ -338,7 +332,7 @@ function getRedditText($awayShort, $awayName, $awayScore, $awayBox, $homeShort, 
 	$text .= "
 ||
 |:-:|
-|^[nbaboxscoregenerator.com](http://www.nbaboxscoregenerator.com) ^by ^/u/Obi-Wan_Ginobili|";
+|^[boxscoregenerator.herokuapp.com](https://boxscoregenerator.herokuapp.com) ^by ^/u/Obi-Wan_Ginobili and ^/u/boxscoreandmore|";
 
 	return $text;
 
