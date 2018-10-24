@@ -568,9 +568,9 @@ function getShortName($teamName) {
 
 			</div>
 			<div class="col-md-6 col-md-offset-1">
-				<p>Made for <a href="http://reddit.com/r/nba">/r/NBA</a> by <a href="http://reddit.com/user/Obi-Wan_Ginobili">/u/Obi-Wan_Ginobili.</a>
+				<p>Made for <a href="http://reddit.com/r/nba">/r/NBA</a> by <a href="http://reddit.com/user/Obi-Wan_Ginobili">/u/Obi-Wan_Ginobili.</a> and <a href="http://reddit.com/user/boxscoreandmore">boxscoreandmore</a> 
 				<br>
-				Report any issues on <a href="https://github.com/ekeric13/boxscoregenerator">Github <i class="mdi mdi-github-circle"></i></a> or send either Obi-Wan_Ginobili <a href="http://reddit.com/user/Obi-Wan_Ginobili">PM</a> or <a href="http://reddit.com/user/boxscoreandmore">boxscoreandmore</a> .
+				Report any issues on <a href="https://github.com/ekeric13/boxscoregenerator">Github <i class="mdi mdi-github-circle"></i></a> or send either <a href="http://reddit.com/user/Obi-Wan_Ginobili">Obi-Wan_Ginobili</a> a PM or <a href="http://reddit.com/user/boxscoreandmore">boxscoreandmore</a> a PM.
 			</div>
 		</div> <!-- End row -->
 
