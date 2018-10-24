@@ -32,17 +32,17 @@ $actual_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https"
 
 $parsed = $actual_link;
 
-// if (isset($_GET['gameID'])) {
-// 	$gameID = $_GET['gameID'];
-// 	$ready = true;
-// }
+if (isset($_GET['gameID'])) {
+	$gameID = $_GET['gameID'];
+	$ready = true;
+}
 
 function isJson($string) {
  json_decode($string);
  return (json_last_error() == JSON_ERROR_NONE);
 }
 
-if ($ready) {
+if (false) {
 
   // works for some reason...
   // wget --header='Connection: keep-alive' --header='User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36' --header='Host: stats.nba.com' --header='Accept: text/html,application/xhtml+xml,application/xml;' https://stats.nba.com/stats/boxscoresummaryv2\?GameId\=0021800041
