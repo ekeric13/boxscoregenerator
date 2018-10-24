@@ -21,6 +21,14 @@ $ch = curl_init();
 curl_setopt($ch, CURLOPT_URL, $scores);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($ch, CURLOPT_VERBOSE, true);
+curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+  'Host: data.nba.com',
+  'Connection: keep-alive',
+  'Accept-Encoding: gzip, deflate, br',
+  'Accept: application/json',
+  'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36'
+));
+curl_setopt($ch, CURLOPT_ENCODING, "");
 $response = curl_exec($ch);
 $json = json_decode($response, TRUE);
 curl_close($ch);
