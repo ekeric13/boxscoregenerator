@@ -20,6 +20,7 @@ $scores = 'https://data.nba.com/data/5s/v2015/json/mobile_teams/nba/2018/scores/
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_URL, $scores);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_VERBOSE, true);
 $response = curl_exec($ch);
 $json = json_decode($response, TRUE);
 curl_close($ch);
