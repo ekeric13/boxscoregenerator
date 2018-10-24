@@ -56,7 +56,7 @@ if ($ready) {
   curl_setopt($ch, CURLOPT_URL, "https://stats.nba.com/stats/boxscoresummaryv2?".$data);
   // curl_setopt($ch, CURLOPT_HTTPHEADER, $stat_headers);
   curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-  curl_setopt($ch, CURLOPT_ENCODING, "");
+  // curl_setopt($ch, CURLOPT_ENCODING, "");
   curl_setopt($ch, CURLOPT_VERBOSE, true);
   $response = curl_exec($ch);
   $json = json_decode($response, TRUE);
