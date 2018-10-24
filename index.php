@@ -528,23 +528,6 @@ function getShortName($teamName) {
 			<h1 style="text-align: center; padding-bottom: 10px;">NBA Box Score Generator for Reddit</h1>
 			<div class="col-md-3 col-md-offset-2">
 
-				<!-- FORM TO CHOOSE DATE -->
-				<!--
-				<form action="" method="GET">
-					<div class="row">
-						<div class="col-md-10" style="padding-right: 5px">
-							<div class="input-group">
-								<span class="input-group-addon" id="basic-addon1">Date</span>
-								<input type="date" class="form-control" style="max-width: 170px;" name="date" value="<?php echo $date; ?>">
-							</div>
-						</div>
-						<div class="col-md-1" style="padding-left: 5px">
-							<input type="submit" value="Enter" class="btn btn-primary">
-						</div>
-					</div>
-				</form>
-				-->
-
 				<form action="" method="GET">
 					<div class="row" style="margin-top: 15px">
 						<div class="col-md-8">
