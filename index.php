@@ -11,7 +11,7 @@ date_default_timezone_set('America/Los_Angeles');
 $stat_headers = array(
   'Host: stats.nba.com',
   'Connection: keep-alive',
-  // 'Accept-Encoding: gzip, deflate, br',
+  'Accept-Encoding: gzip, deflate, br',
   'Accept: application/json',
   // 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36'
 );
