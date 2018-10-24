@@ -42,7 +42,7 @@ function isJson($string) {
  return (json_last_error() == JSON_ERROR_NONE);
 }
 
-if (false) {
+if ($ready) {
 
   // works for some reason...
   // wget --header='Connection: keep-alive' --header='User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36' --header='Host: stats.nba.com' --header='Accept: text/html,application/xhtml+xml,application/xml;' https://stats.nba.com/stats/boxscoresummaryv2\?GameId\=0021800041
@@ -63,110 +63,110 @@ if (false) {
 
   $boxscoreSummary = $json['resultSets'];
 
-  $ch = curl_init();
-  $data = http_build_query(array(
-   'GameID'  => $gameID,
-   'EndPeriod' => '10',
-   'EndRange' => '28800',
-   'RangeType' => '0',
-   'Season' => '2018-19',
-   'StartPeriod' => '1',
-   'StartRange' => '0'
-  ));
-  curl_setopt($ch, CURLOPT_URL, "https://stats.nba.com/stats/boxscoretraditionalv2?" . $data);
-  curl_setopt($ch, CURLOPT_HTTPHEADER, $stat_headers);
-  curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-  curl_setopt($ch, CURLOPT_ENCODING, "");
-  $response = curl_exec($ch);
-  $json = json_decode($response, TRUE);
-  curl_close($ch);
+ //  $ch = curl_init();
+ //  $data = http_build_query(array(
+ //   'GameID'  => $gameID,
+ //   'EndPeriod' => '10',
+ //   'EndRange' => '28800',
+ //   'RangeType' => '0',
+ //   'Season' => '2018-19',
+ //   'StartPeriod' => '1',
+ //   'StartRange' => '0'
+ //  ));
+ //  curl_setopt($ch, CURLOPT_URL, "https://stats.nba.com/stats/boxscoretraditionalv2?" . $data);
+ //  curl_setopt($ch, CURLOPT_HTTPHEADER, $stat_headers);
+ //  curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+ //  curl_setopt($ch, CURLOPT_ENCODING, "");
+ //  $response = curl_exec($ch);
+ //  $json = json_decode($response, TRUE);
+ //  curl_close($ch);
 
-  $boxscore = $json['resultSets'];
+ //  $boxscore = $json['resultSets'];
 
-  $format = [
-          "Player",
-          "Pos",
-          "Min",
-          "FG",
-          "FT",
-          "3PT",
-          "+/-",
-          "OR",
-          "Reb",
-          "A",
-          "Blk",
-          "Stl",
-          "TO",
-          "PF",
-          "Pts"
-        ];
-  $visitorBoxArr = [$format];
-  $homeBoxArr = [$format];
+ //  $format = [
+ //          "Player",
+ //          "Pos",
+ //          "Min",
+ //          "FG",
+ //          "FT",
+ //          "3PT",
+ //          "+/-",
+ //          "OR",
+ //          "Reb",
+ //          "A",
+ //          "Blk",
+ //          "Stl",
+ //          "TO",
+ //          "PF",
+ //          "Pts"
+ //        ];
+ //  $visitorBoxArr = [$format];
+ //  $homeBoxArr = [$format];
 
-	$visitorShort = $boxscoreSummary[5]['rowSet'][1][4];
-	$visitorName = $boxscoreSummary[5]['rowSet'][1][5];
-	$visitorScore = $boxscoreSummary[5]['rowSet'][1][22];
+	// $visitorShort = $boxscoreSummary[5]['rowSet'][1][4];
+	// $visitorName = $boxscoreSummary[5]['rowSet'][1][5];
+	// $visitorScore = $boxscoreSummary[5]['rowSet'][1][22];
 
-	$homeShort = $boxscoreSummary[5]['rowSet'][0][4];
-	$homeName = $boxscoreSummary[5]['rowSet'][0][5];
-	$homeScore = $boxscoreSummary[5]['rowSet'][0][22];
+	// $homeShort = $boxscoreSummary[5]['rowSet'][0][4];
+	// $homeName = $boxscoreSummary[5]['rowSet'][0][5];
+	// $homeScore = $boxscoreSummary[5]['rowSet'][0][22];
 
-  foreach ($boxscore[0]['rowSet'] as $value) {
-    $data = [
-      $value[5],
-      $value[6],
-      $value[8],
-      "{$value[9]}-{$value[10]}",
-      "{$value[15]}-{$value[16]}",
-      "{$value[12]}-{$value[13]}",
-      $value[27],
-      $value[18],
-      $value[20],
-      $value[21],
-      $value[23],
-      $value[22],
-      $value[24],
-      $value[25],
-      $value[26]
-    ];
+ //  foreach ($boxscore[0]['rowSet'] as $value) {
+ //    $data = [
+ //      $value[5],
+ //      $value[6],
+ //      $value[8],
+ //      "{$value[9]}-{$value[10]}",
+ //      "{$value[15]}-{$value[16]}",
+ //      "{$value[12]}-{$value[13]}",
+ //      $value[27],
+ //      $value[18],
+ //      $value[20],
+ //      $value[21],
+ //      $value[23],
+ //      $value[22],
+ //      $value[24],
+ //      $value[25],
+ //      $value[26]
+ //    ];
 
-    if ($value[2] == $visitorShort) {
-      array_push($visitorBoxArr, $data);
-    } else {
-      array_push($homeBoxArr, $data);
-    }
-  }
+ //    if ($value[2] == $visitorShort) {
+ //      array_push($visitorBoxArr, $data);
+ //    } else {
+ //      array_push($homeBoxArr, $data);
+ //    }
+ //  }
 
-  foreach ($boxscore[1]['rowSet'] as $value) {
-    $data = [
-      "Totals",
-      "&nbsp;",
-      "&nbsp;",
-      "{$value[6]}-{$value[7]}({$value[8]})",
-      "{$value[12]}-{$value[13]}({$value[14]})",
-      "{$value[9]}-{$value[10]}({$value[11]})",
-      $value[24],
-      $value[15],
-      $value[17],
-      $value[18],
-      $value[20],
-      $value[19],
-      $value[21],
-      $value[22],
-      $value[23]      
-    ];
-    if ($value[3] == $visitorShort) {
-      array_push($visitorBoxArr, $data);
-    } else {
-      array_push($homeBoxArr, $data);
-    }
-  }
+ //  foreach ($boxscore[1]['rowSet'] as $value) {
+ //    $data = [
+ //      "Totals",
+ //      "&nbsp;",
+ //      "&nbsp;",
+ //      "{$value[6]}-{$value[7]}({$value[8]})",
+ //      "{$value[12]}-{$value[13]}({$value[14]})",
+ //      "{$value[9]}-{$value[10]}({$value[11]})",
+ //      $value[24],
+ //      $value[15],
+ //      $value[17],
+ //      $value[18],
+ //      $value[20],
+ //      $value[19],
+ //      $value[21],
+ //      $value[22],
+ //      $value[23]      
+ //    ];
+ //    if ($value[3] == $visitorShort) {
+ //      array_push($visitorBoxArr, $data);
+ //    } else {
+ //      array_push($homeBoxArr, $data);
+ //    }
+ //  }
 
-  $visitorBox = $visitorBoxArr;
-  $homeBox = $homeBoxArr;
+ //  $visitorBox = $visitorBoxArr;
+ //  $homeBox = $homeBoxArr;
 
 
-	$textToReddit = getRedditText($visitorShort, $visitorName, $visitorScore, $visitorBox, $homeShort, $homeName, $homeScore, $homeBox);
+	// $textToReddit = getRedditText($visitorShort, $visitorName, $visitorScore, $visitorBox, $homeShort, $homeName, $homeScore, $homeBox);
 
 
 
